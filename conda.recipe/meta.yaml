@@ -8,6 +8,7 @@ source:
 build:
   entry_points:
     - imagepicker = imagepicker.main:main
+  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
 
 requirements:
   build:
