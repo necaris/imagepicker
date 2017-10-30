@@ -19,5 +19,13 @@ requirements:
     - ruamel.yaml >=0.15
     - pyqt >=5.6
 
+test:
+  imports:
+    - imagepicker
+  commands:
+    - imagepicker -V
+
+
+
 about:
   home: https://github.com/necaris/imagepicker

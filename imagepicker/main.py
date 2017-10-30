@@ -11,6 +11,7 @@ import typing as T
 
 from PyQt5.QtWidgets import QApplication
 
+from imagepicker import __version__
 from imagepicker.ui import ImagePicker
 
 
@@ -18,6 +19,10 @@ def main(argv: T.List[str]=None) -> None:
     '''Get the application started.'''
     if not argv:
         argv = sys.argv
+
+    if len(argv) > 1 and argv[1] == '-V':
+        print(__version__)
+        sys.exit(0)
 
     app = QApplication(argv)
     picker = ImagePicker()
