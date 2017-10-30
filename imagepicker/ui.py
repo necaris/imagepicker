@@ -3,6 +3,7 @@
 Define the UI
 '''
 from functools import partial
+import time
 import typing as T
 
 from PyQt5.QtCore import Qt, QDir, QSize, pyqtSignal
@@ -62,6 +63,7 @@ class ImagePicker(QMainWindow):
     model: PickerModel = None
 
     _imagesLoaded: bool = False
+    _imageCache: T.Dict = None
 
     # signals -- this is going to make pylint complain, but whatever
     imageChanged = pyqtSignal(int)
@@ -74,6 +76,7 @@ class ImagePicker(QMainWindow):
         super().__init__()
 
         self.model = PickerModel()
+        self._imageCache = {}
         self._initUI()
         self._connectSlots()
         self._createActions()
@@ -271,13 +274,10 @@ class ImagePicker(QMainWindow):
 
     def _updateDisplay(self):
         fileName = self.model.currentFile
-        image = QImage(fileName)
-        if image.isNull():
-            QMessageBox.information(self, "ImagePicker",
-                                    "Can't load {}".format(fileName))
-            return
+        pixmap = self._loadImageFromCache(fileName)
 
-        self.labels.mainImage.setPixmap(QPixmap.fromImage(image))
+        self.labels.mainImage.setPixmap(pixmap)
+        self._scaleImages()
 
         if not self._imagesLoaded:
             self.labels.currStripImage.setStyleSheet('border: 2px solid blue')
@@ -294,7 +294,7 @@ class ImagePicker(QMainWindow):
             if image.isNull():
                 QMessageBox.information(self, "ImagePicker",
                                         "Can't load {}".format(file_))
-            pixmap = QPixmap.fromImage(image).scaledToWidth(filmstripWidth)
+            pixmap = self._loadImageFromCache(file_).scaledToWidth(filmstripWidth)
             label_.setPixmap(pixmap)
 
         self.actions.fitToWindow.setEnabled(True)
@@ -302,7 +302,6 @@ class ImagePicker(QMainWindow):
 
         self._updatePickedButton()
 
-        self._scaleImages()
 
     def _updatePickedButton(self):
         pickBtn = self.buttons.pick
@@ -362,3 +361,22 @@ class ImagePicker(QMainWindow):
                     self.scrollArea.verticalScrollBar()]:
             adjustment = computeScrollBarAdjustment(scb, scale)
             scb.setValue(int(adjustment))
+
+    def _loadImageFromCache(self, filename: str) -> QPixmap:
+        if filename in self._imageCache:
+            pixmap, _ = self._imageCache[filename]
+        else:
+            image = QImage(filename)
+            if image.isNull():
+                QMessageBox.information(self, "ImagePicker",
+                                        "Can't load {}".format(filename))
+            pixmap = QPixmap.fromImage(image)
+            self._imageCache[filename] = (pixmap, time.time())
+
+            # cache pruning
+            if len(self._imageCache) > 5:
+                lru = sorted(self._imageCache.keys(),
+                             key=lambda k: self._imageCache[k][1])[0]
+                del self._imageCache[lru]
+
+        return pixmap
