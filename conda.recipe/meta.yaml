@@ -25,7 +25,5 @@ test:
   commands:
     - imagepicker -V
 
-
-
 about:
   home: https://github.com/necaris/imagepicker
