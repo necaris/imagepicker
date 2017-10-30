@@ -1,6 +1,6 @@
 import os
 
-from setuptools import setup, Command
+from setuptools import setup, find_packages
 
 
 VERSION = "0.1"
@@ -11,7 +11,7 @@ setup(
     description='ImagePicker for choosing images',
     long_description='',
     url='http://github.com/necaris/imagepicker',
-    py_modules=['imagepicker'],
+    packages=find_packages(),
     # license specified by classifier
     author='Rami Chowdhury',
     author_email='rami.chowdhury@gmail.com',

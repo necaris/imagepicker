@@ -1,0 +1,6 @@
+exclude imagepicker/__pycache__
+include imagepicker/images/*
+include imagepicker/resources.qrc
+recursive-include . *.py
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
