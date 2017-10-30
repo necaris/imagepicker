@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>images/heart.svg</file>
+    <file>images/delete.svg</file>
+</qresource>
+</RCC>

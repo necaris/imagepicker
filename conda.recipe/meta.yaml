@@ -1,0 +1,22 @@
+package:
+  name: imagepicker
+  version: {{ environ.get('GIT_DESCRIBE_TAG', '0.1') }}
+
+source:
+  git_url: ../
+
+build:
+  entry_points:
+    - imagepicker = imagepicker.main:main
+
+requirements:
+  build:
+    - python
+    - setuptools
+  run:
+    - python >=3.6
+    - ruamel.yaml =0.15
+    - pyqt =5.6
+
+about:
+  home: https://github.com/necaris/imagepicker
