@@ -1,9 +1,11 @@
 '''Helpers'''
 import os
 import mimetypes
+import pdb
 import typing as T
 
 from PyQt5.QtWidgets import QLabel, QScrollBar
+from PyQt5.QtCore import pyqtRemoveInputHook
 
 
 def listImageFiles(directory: str) -> T.Generator[str, None, None]:
@@ -12,7 +14,8 @@ def listImageFiles(directory: str) -> T.Generator[str, None, None]:
         for fname in files:
             typ, __ = mimetypes.guess_type(fname)
             if typ and typ.startswith('image/'):
-                yield os.path.join(root, fname)
+                full_path = os.path.join(root, fname)
+                yield os.path.relpath(full_path, directory)
 
 
 def computeScrollBarAdjustment(scrollbar: QScrollBar, scale: float):
@@ -24,3 +27,8 @@ def computeScrollBarAdjustment(scrollbar: QScrollBar, scale: float):
 def updateCountLabel(label: QLabel, message: str, count: int):
     '''Update a label that's showing a count of something.'''
     label.setText(message + ': ' + str(count))
+
+
+def setPDBTrace():
+    pyqtRemoveInputHook()
+    pdb.set_trace()
